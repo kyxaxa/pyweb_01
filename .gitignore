@@ -1,6 +1,0 @@
-venv/
-scripts/
-
-*.bat
-.git/
-.gitignore
