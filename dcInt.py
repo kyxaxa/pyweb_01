@@ -30,25 +30,41 @@ def is_verb(word):
     #print('             ', pos_info)
     return pos_info[0][1] in ['VB', 'VBN']
 
-def get_trees(_path, with_filenames=False, with_file_content=False):
+def read_file(filename, encoding='utf-8'):
+    with open(filename, 'r', encoding=encoding) as attempt_handler:
+        main_file_content = attempt_handler.read()
+    return main_file_content
+
+def get_trees(path, with_filenames=False, with_file_content=False, extension='.py', encoding='utf-8'):
+    '''
+        searching for .py files
+    '''
+    #encoding = 'cp1251'
     filenames = []
     trees = []
-    path = Path
+
+    ### search filenames with good extension
     for dirname, dirs, files in os.walk(path, topdown=True):
-        for file in files:
-            if file.endswith('.py'):
-                filenames.append(os.path.join(dirname, file))
-                if len(filenames) == 100:
-                    break
-    print('total %s files' % len(filenames))
+        #print(f'path {path}, dirname {dirname}, dirs {dirs}, files {files}')
+        filenames.append( [
+                os.path.join(dirname, file)
+                for file in files if file.endswith(extension)
+                ]
+                )
+    filenames = flat(filenames)
+
+    print(f'total %s files with extension {extension}' % len(filenames))
+
     for filename in filenames:
-        with open(filename, 'r', encoding='utf-8') as attempt_handler:
-            main_file_content = attempt_handler.read()
+        main_file_content = read_file(filename, encoding)
+
         try:
             tree = ast.parse(main_file_content)
-        except SyntaxError as e:
-            print(e)
+        except Exception as e:
+            print('error', e)
             tree = None
+            continue
+
         if with_filenames:
             if with_file_content:
                 trees.append((filename, main_file_content, tree))
@@ -56,7 +72,7 @@ def get_trees(_path, with_filenames=False, with_file_content=False):
                 trees.append((filename, tree))
         else:
             trees.append(tree)
-    print('trees generated')
+    print(f'{len(trees)} trees generated')
     return trees
 
 
@@ -119,8 +135,8 @@ def test_functions():
         print(3, flat([(1, 2), (3, 4)]))
 
     # test is_verb
-    t = 0
     t = 1
+    t = 0
     if t:
         words = [
                 'hello',
@@ -136,7 +152,22 @@ def test_functions():
                 'valued',
                 ]
         for w in words:
-            print('%s is_verb %s' % (w, is_verb(w)))
+            print(f'{w} is_verb %s' % (w, is_verb(w)))
+
+    t = 0
+    t = 1
+    if t:
+        dirs = [
+                #r'unknown',
+                #r'.git',
+                #r'c:\!code\PyWeb\01\dz1\.git',
+                #r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\modules',
+                r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\sklearn',
+                ]
+        for d in dirs:
+            tree = get_trees(d)
+            print('-'*20, f'directory {d}')
+            print(f'     tree {tree}')
 
     os._exit(0)
 
