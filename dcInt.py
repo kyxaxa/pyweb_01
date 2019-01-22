@@ -12,7 +12,7 @@ def flat(_list):
     return sum([list(item) for item in _list], [])
 
 
-def is_verb(word):
+def  is_verb(word):
     if not word:
         return False
     pos_info = pos_tag([word])
@@ -68,14 +68,19 @@ def get_all_words_in_path(path):
     def split_snake_case_name_to_words(name):
         return [n for n in name.split('_') if n]
 
-    return flat([split_snake_case_name_to_words(function_name) for function_name in function_names])
+    return flat([
+        split_snake_case_name_to_words(function_name)
+        for function_name in function_names
+        ])
 
 
 def get_top_verbs_in_path(path, top_size=10):
     global Path
     Path = path
     trees = [t for t in get_trees(None) if t]
-    fncs = [f for f in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in trees]) if not (f.startswith('__') and f.endswith('__'))]
+    fncs = [f for f
+            in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in trees])
+            if not (f.startswith('__') and f.endswith('__'))]
     print('functions extracted')
     verbs = flat([get_verbs_from_function_name(function_name) for function_name in fncs])
     return collections.Counter(verbs).most_common(top_size)
@@ -83,11 +88,42 @@ def get_top_verbs_in_path(path, top_size=10):
 
 def get_top_functions_names_in_path(path, top_size=10):
     t = get_trees(path)
-    nms = [f for f in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in t]) if not (f.startswith('__') and f.endswith('__'))]
+    nms = [
+        f for f
+        in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in t])
+        if not (f.startswith('__') and f.endswith('__'))]
     return collections.Counter(nms).most_common(top_size)
 
 
+def test_functions():
+    '''
+        test unknown functions
+    '''
+
+    # test flat()
+    t = 1
+    t = 0
+    if t:
+        print(1, sum([[1, 2]], [3, 4]))
+        #print(2, sum([1, 2], [3]))
+        print(3, flat([(1, 2), (3, 4)]))
+
+    # test is_verb
+    t = 0
+    t = 1
+    if t:
+        words = ['hello', 'like', 'love']
+        for w in words:
+            print('%s is_verb %s' % (w, is_verb(w)))
+
+    os._exit(0)
+
+
 if __name__ == '__main__':
+
+    t = 1
+    if t:
+        test_functions()
 
     wds = []
     projects = [
