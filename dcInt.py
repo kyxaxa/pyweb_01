@@ -20,13 +20,15 @@ def flat(_list):
     return sum([list(item) for item in _list], [])
 
 
-def  is_verb(word):
+def is_verb(word):
+    '''
+    Check if our word is Verb or no
+    '''
     if not word:
         return False
     pos_info = pos_tag([word])
-    print(pos_info)
-    return pos_info[0][1] == 'VB'
-
+    #print('             ', pos_info)
+    return pos_info[0][1] in ['VB', 'VBN']
 
 def get_trees(_path, with_filenames=False, with_file_content=False):
     filenames = []
@@ -120,7 +122,19 @@ def test_functions():
     t = 0
     t = 1
     if t:
-        words = ['hello', 'like', 'love']
+        words = [
+                'hello',
+                'like',
+                'love',
+                'fetch',
+
+                'refuse',
+                'permit',
+
+                'obtain',
+                'liked',
+                'valued',
+                ]
         for w in words:
             print('%s is_verb %s' % (w, is_verb(w)))
 
