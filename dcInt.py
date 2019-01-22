@@ -73,37 +73,18 @@ def get_trees(path, with_filenames=False, with_file_content=False, extension='.p
     return trees
 
 
-def get_all_names(tree):
-    return [node.id for node in ast.walk(tree) if isinstance(node, ast.Name)]
-
-
 def get_verbs_from_function_name(function_name):
     return [word for word in function_name.split('_') if is_verb(word)]
 
 
-def get_all_words_in_path(path, limit_trees=1):
-    trees = [t for t in get_trees(path) if t]
-    trees = trees[:limit_trees]
-    function_names = [
-            f for f in flat([get_all_names(t) for t in trees])
-            if not (f.startswith('__') and f.endswith('__'))
-            ]
-
-    def split_snake_case_name_to_words(name):
-        return [n for n in name.split('_') if n]
-
-    return flat([
-        split_snake_case_name_to_words(function_name)
-        for function_name in function_names
-        ])
-
-
 def get_top_verbs_in_path(path, top_size=10):
-    trees = [t for t in get_trees(None) if t]
+    trees = [t for t in get_trees(path) if t]
     fncs = [f for f
             in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in trees])
             if not (f.startswith('__') and f.endswith('__'))]
-    print('functions extracted')
+    print(f'{len(fncs)} functions extracted')
+    print(fncs[:10])
+
     verbs = flat([get_verbs_from_function_name(function_name) for function_name in fncs])
     return collections.Counter(verbs).most_common(top_size)
 
@@ -168,14 +149,16 @@ def test_functions():
                 print('-'*20, f'directory {d}')
                 #print(f'     trees {trees}')
 
-                trees = trees[:]
+            t = 0
+            t = 1
+            if t:
+                verbs = get_top_verbs_in_path(d)
+                print(f'get_top_verbs_in_path: {verbs}')
 
-                for i, tree in enumerate(trees):
-                    print(f'{i}, names {get_all_names(tree)}')
-                    break
-
-            words = get_all_words_in_path(d)
-            print(f'{len(words)} words {words[:10]}...')
+            t = 1
+            if t:
+                names = get_top_functions_names_in_path(d)
+                print(f'get_top_functions_names_in_path: {names}')
 
     os._exit(0)
 
@@ -183,6 +166,7 @@ def test_functions():
 if __name__ == '__main__':
 
     t = 1
+    t = 0
     if t:
         test_functions()
 
@@ -194,12 +178,13 @@ if __name__ == '__main__':
         'reddit',
         'requests',
         'sqlalchemy',
+        r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\sklearn',
     ]
     for project in projects:
-        path = os.path.join('.', project)
-        wds += get_top_verbs_in_path(path)
+        #path = os.path.join('.', project)
+        wds += get_top_verbs_in_path(project)
 
     top_size = 200
-    print('total %s words, %s unique' % (len(wds), len(set(wds))))
+    print(f'total {len(wds)} words, {len(set(wds))} unique')
     for word, occurence in collections.Counter(wds).most_common(top_size):
         print(word, occurence)
