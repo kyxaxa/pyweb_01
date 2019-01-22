@@ -12,9 +12,6 @@ except Exception as er:
     print('nltk: download averaged_perceptron_tagger')
     nltk.download('averaged_perceptron_tagger')
 
-Path = ''
-
-
 def flat(_list):
     """ [(1,2), (3,4)] -> [1, 2, 3, 4]"""
     return sum([list(item) for item in _list], [])
@@ -84,8 +81,9 @@ def get_verbs_from_function_name(function_name):
     return [word for word in function_name.split('_') if is_verb(word)]
 
 
-def get_all_words_in_path(path):
+def get_all_words_in_path(path, limit_trees=1):
     trees = [t for t in get_trees(path) if t]
+    trees = trees[:limit_trees]
     function_names = [
             f for f in flat([get_all_names(t) for t in trees])
             if not (f.startswith('__') and f.endswith('__'))
@@ -101,8 +99,6 @@ def get_all_words_in_path(path):
 
 
 def get_top_verbs_in_path(path, top_size=10):
-    global Path
-    Path = path
     trees = [t for t in get_trees(None) if t]
     fncs = [f for f
             in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in trees])
@@ -134,7 +130,7 @@ def test_functions():
         #print(2, sum([1, 2], [3]))
         print(3, flat([(1, 2), (3, 4)]))
 
-    # test is_verb
+    # test is_verb()
     t = 1
     t = 0
     if t:
@@ -154,6 +150,7 @@ def test_functions():
         for w in words:
             print(f'{w} is_verb %s' % (w, is_verb(w)))
 
+    # test get_trees()
     t = 0
     t = 1
     if t:
@@ -165,9 +162,20 @@ def test_functions():
                 r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\sklearn',
                 ]
         for d in dirs:
-            tree = get_trees(d)
-            print('-'*20, f'directory {d}')
-            print(f'     tree {tree}')
+            t = 0
+            if t:
+                trees = get_trees(d)
+                print('-'*20, f'directory {d}')
+                #print(f'     trees {trees}')
+
+                trees = trees[:]
+
+                for i, tree in enumerate(trees):
+                    print(f'{i}, names {get_all_names(tree)}')
+                    break
+
+            words = get_all_words_in_path(d)
+            print(f'{len(words)} words {words[:10]}...')
 
     os._exit(0)
 
