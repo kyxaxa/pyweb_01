@@ -4,6 +4,14 @@ import collections
 
 from nltk import pos_tag
 
+import nltk
+
+try:
+    pos_tag(['hello'])
+except Exception as er:
+    print('nltk: download averaged_perceptron_tagger')
+    nltk.download('averaged_perceptron_tagger')
+
 Path = ''
 
 
