@@ -1,30 +1,41 @@
-# First homework for course PyWeb
+# First homework for course PyWeb. Count verbs in the names of python functions.
 
-Reusable library for everybody :)
+First, take any path to the python library `path`. After that you can do the following:
 
+### Count top verbs in the names of functions
+
+	get_top_verbs_in_path(path)
+
+### Count top functions sorted by frequency of using.
+
+	get_top_functions_names_in_path(d)
 
 ## Example of usage:
 
-```
-dirs = [
-        r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\sklearn',
-        ]
-for d in dirs:
-    verbs = get_top_verbs_in_path(d)
-    print(f'get_top_verbs_in_path: {verbs}')
+Code:
 
-    names = get_top_functions_names_in_path(d)
-    print(f'get_top_functions_names_in_path: {names}')
-```
+	dirs = [
+	        r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\sklearn',
+	        ]
+	for d in dirs:
+	    verbs = get_top_verbs_in_path(d)
+	    print(f'get_top_verbs_in_path: {verbs}')
+	
+	    names = get_top_functions_names_in_path(d)
+	    print(f'get_top_functions_names_in_path: {names}')
 
 Answer:
-```
-get_top_verbs_in_path: [('get', 98), ('make', 68), ('precomputed', 20), ('randomized', 17), ('weighted', 9), ('squared', 8), ('balanced', 8), ('paired', 8), ('stratified', 8), ('initialize', 7)]
 
-get_top_functions_names_in_path: [('fit', 177), ('predict', 69), ('transform', 58), ('predict_proba', 26), ('score', 25), ('fit_transform', 25), ('decision_function', 22), ('inverse_transform', 22), ('partial_fit', 21), ('configuration', 17)]
-```
+	get_top_verbs_in_path: [('get', 98), ('make', 68), ('precomputed', 20), ('randomized', 17), ('weighted', 9), ('squared', 8), ('balanced', 8), ('paired', 8), ('stratified', 8), ('initialize', 7)]
+	
+	get_top_functions_names_in_path: [('fit', 177), ('predict', 69), ('transform', 58), ('predict_proba', 26), ('score', 25), ('fit_transform', 25), ('decision_function', 22), ('inverse_transform', 22), ('partial_fit', 21), ('configuration', 17)]
+
 
 # Useful links
+
+## The same work made by other people:
+
+* https://github.com/tonkytonky/otus_lecture_1/blob/master/count_function_verbs.py
 
 ## NLTK
 
@@ -33,3 +44,8 @@ get_top_functions_names_in_path: [('fit', 177), ('predict', 69), ('transform', 5
 
 ## Python
 * https://realpython.com/python-f-strings/
+
+## Different
+* [Full course: Web-разработчик на Python](https://otus.ru/lessons/webpython/)
+
+
