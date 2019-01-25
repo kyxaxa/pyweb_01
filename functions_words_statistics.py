@@ -32,14 +32,11 @@ def read_file(filename, encoding='utf-8'):
         main_file_content = attempt_handler.read()
     return main_file_content
 
-def get_trees(path, with_filenames=False, with_file_content=False, extension='.py', encoding='utf-8'):
+def get_files_from_directory(path, extension='.py'):
     '''
-        searching for .py files
+        get all files in directory
     '''
-    #encoding = 'cp1251'
     filenames = []
-    trees = []
-
     ### search filenames with good extension
     for dirname, dirs, files in os.walk(path, topdown=True):
         #print(f'path {path}, dirname {dirname}, dirs {dirs}, files {files}')
@@ -49,9 +46,10 @@ def get_trees(path, with_filenames=False, with_file_content=False, extension='.p
                 ]
                 )
     filenames = flat(filenames)
+    return filenames
 
-    print(f'total %s files with extension {extension}' % len(filenames))
-
+def get_astTrees_from_filenames(filenames=[], encoding='utf-8'):
+    trees = []
     for filename in filenames:
         main_file_content = read_file(filename, encoding)
 
@@ -59,9 +57,25 @@ def get_trees(path, with_filenames=False, with_file_content=False, extension='.p
             tree = ast.parse(main_file_content)
         except Exception as e:
             print('error', e)
-            tree = None
             continue
 
+        trees.append(tree)
+    return trees
+
+def get_trees(path, with_filenames=False, with_file_content=False, extension='.py', encoding='utf-8'):
+    '''
+        searching for .py files
+    '''
+    #encoding = 'cp1251'
+
+    filenames = get_files_from_directory(path, extension=extension)
+
+    print(f'total %s files with extension {extension}' % len(filenames))
+
+    ast_trees = get_astTrees_from_filenames(filenames, encoding=encoding)
+
+    trees = []
+    for tree in ast_trees:
         if with_filenames:
             if with_file_content:
                 trees.append((filename, main_file_content, tree))

@@ -41,7 +41,7 @@ Answer:
 
 # Useful links
 
-## The same work made by other people:
+## The same work made by other people
 
 * https://github.com/tonkytonky/otus_lecture_1/blob/master/count_function_verbs.py
 
