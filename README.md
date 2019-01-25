@@ -1,16 +1,24 @@
-# First homework for course PyWeb. Count verbs in the names of python functions.
+# Count verbs in the names of Python functions.
 
-First, take any path to the python library `path`. After that you can do the following:
+Language: **python**
+
+## How to use it
+
+Take any path to the python library `path`. 
+
+	path =  r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\sklearn'
+
+After that you can do the following:
 
 ### Count top verbs in the names of functions
 
 	get_top_verbs_in_path(path)
 
-### Count top functions sorted by frequency of using.
+### Count top functions sorted by frequency of their using
 
 	get_top_functions_names_in_path(d)
 
-## Example of usage:
+### Example of usage
 
 Code:
 
