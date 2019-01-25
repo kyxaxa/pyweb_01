@@ -1,52 +1,9 @@
 import ast
-import os
-import collections
 
-from nltk import pos_tag
+from base_functions import *
+from work_with_files import *
+from verb_detection import *
 
-import nltk
-
-try:
-    pos_tag(['hello'])
-except Exception as er:
-    print('nltk: download averaged_perceptron_tagger')
-    nltk.download('averaged_perceptron_tagger')
-
-def flat(_list):
-    """ [(1,2), (3,4)] -> [1, 2, 3, 4]"""
-    return sum([list(item) for item in _list], [])
-
-
-def is_verb(word):
-    '''
-    Check if our word is Verb or no
-    '''
-    if not word:
-        return False
-    pos_info = pos_tag([word])
-    #print('             ', pos_info)
-    return pos_info[0][1] in ['VB', 'VBN']
-
-def read_file(filename, encoding='utf-8'):
-    with open(filename, 'r', encoding=encoding) as attempt_handler:
-        main_file_content = attempt_handler.read()
-    return main_file_content
-
-def get_files_from_directory(path, extension='.py'):
-    '''
-        get all files in directory
-    '''
-    filenames = []
-    ### search filenames with good extension
-    for dirname, dirs, files in os.walk(path, topdown=True):
-        #print(f'path {path}, dirname {dirname}, dirs {dirs}, files {files}')
-        filenames.append( [
-                os.path.join(dirname, file)
-                for file in files if file.endswith(extension)
-                ]
-                )
-    filenames = flat(filenames)
-    return filenames
 
 def get_astTrees_from_filenames(filenames=[], encoding='utf-8'):
     trees = []
@@ -62,7 +19,14 @@ def get_astTrees_from_filenames(filenames=[], encoding='utf-8'):
         trees.append(tree)
     return trees
 
-def get_trees(path, with_filenames=False, with_file_content=False, extension='.py', encoding='utf-8'):
+
+def get_trees(
+        path,
+        with_filenames=False,
+        with_file_content=False,
+        extension='.py',
+        encoding='utf-8',
+        ):
     '''
         searching for .py files
     '''
@@ -87,10 +51,6 @@ def get_trees(path, with_filenames=False, with_file_content=False, extension='.p
     return trees
 
 
-def get_verbs_from_function_name(function_name):
-    return [word for word in function_name.split('_') if is_verb(word)]
-
-
 def get_top_verbs_in_path(path, top_size=10):
     trees = [t for t in get_trees(path) if t]
     fncs = [f for f
@@ -100,7 +60,7 @@ def get_top_verbs_in_path(path, top_size=10):
     print(fncs[:10])
 
     verbs = flat([get_verbs_from_function_name(function_name) for function_name in fncs])
-    return collections.Counter(verbs).most_common(top_size)
+    return get_top_of_list(verbs, top_size)
 
 
 def get_top_functions_names_in_path(path, top_size=10):
@@ -109,7 +69,7 @@ def get_top_functions_names_in_path(path, top_size=10):
         f for f
         in flat([[node.name.lower() for node in ast.walk(t) if isinstance(node, ast.FunctionDef)] for t in t])
         if not (f.startswith('__') and f.endswith('__'))]
-    return collections.Counter(nms).most_common(top_size)
+    return get_top_of_list(nms, top_size)
 
 
 def test_functions():
@@ -200,5 +160,5 @@ if __name__ == '__main__':
 
     top_size = 200
     print(f'total {len(wds)} words, {len(set(wds))} unique')
-    for word, occurence in collections.Counter(wds).most_common(top_size):
+    for word, occurence in get_top_of_list(wds, top_size):
         print(word, occurence)
