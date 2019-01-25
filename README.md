@@ -4,6 +4,10 @@ Language: **python**
 
 ## How to use it
 
+Import the library
+	
+	import words_statistics
+
 Take any path to the python library `path`. 
 
 	path =  r'c:\Program Files (x86)\Anaconda2\Lib\site-packages\sklearn'
